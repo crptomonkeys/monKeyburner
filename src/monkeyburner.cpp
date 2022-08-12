@@ -13,6 +13,8 @@ void monkeyburner::receive_atomicassets_transfer(
     return;
   }
 
+  eosio::check(memo == "burn", "invalid memo");
+
   maintenace_check();
 
   auto config = get_config().get();
