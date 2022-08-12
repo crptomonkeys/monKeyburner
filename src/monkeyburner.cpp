@@ -31,32 +31,32 @@ void monkeyburner::receive_atomicassets_transfer(
                      [&](auto &row) { row.capacity = row.capacity - 1; });
 
     auto contract_balance = eosiotoken::get_balance(
-        be->token_contract, get_self(), be->price.symbol.code());
+        be->price.contract, get_self(), be->price.quantity.symbol.code());
 
-    if (contract_balance.amount >= be->price.amount) {
-      eosio::action(
-          eosio::permission_level{get_self(), eosio::name("active")},
-          be->token_contract, eosio::name("transfer"),
-          std::make_tuple(get_self(), from, be->price, config.params.memo))
+    if (contract_balance.amount >= be->price.quantity.amount) {
+      eosio::action(eosio::permission_level{get_self(), eosio::name("active")},
+                    be->price.contract, eosio::name("transfer"),
+                    std::make_tuple(get_self(), from, be->price.quantity,
+                                    config.params.memo))
           .send();
     } else {
       eosio::action(
-          eosio::permission_level{be->token_contract, eosio::name("active")},
-          be->token_contract, eosio::name("issue"),
-          std::make_tuple(be->token_contract, be->price, config.params.memo))
+          eosio::permission_level{be->price.contract, eosio::name("active")},
+          be->price.contract, eosio::name("issue"),
+          std::make_tuple(be->price.contract, be->price.quantity,
+                          config.params.memo))
           .send();
       eosio::action(
-          eosio::permission_level{be->token_contract, eosio::name("active")},
-          be->token_contract, eosio::name("transfer"),
-          std::make_tuple(be->token_contract, from, be->price,
+          eosio::permission_level{be->price.contract, eosio::name("active")},
+          be->price.contract, eosio::name("transfer"),
+          std::make_tuple(be->price.contract, from, be->price.quantity,
                           config.params.memo))
           .send();
     }
 
     eosio::action(eosio::permission_level{get_self(), eosio::name("active")},
                   get_self(), eosio::name("logburn"),
-                  std::make_tuple(asset_id, from, be->token_contract, be->price,
-                                  be->burn_nft))
+                  std::make_tuple(asset_id, from, be->price, be->burn_nft))
         .send();
 
     if (be->burn_nft) {

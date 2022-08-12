@@ -1,14 +1,15 @@
-void monkeyburner::setburnable(int32_t template_id, eosio::name &token_contract,
-                               eosio::asset &price, bool burn_nft,
+void monkeyburner::setburnable(int32_t template_id,
+                               eosio::extended_asset &price, bool burn_nft,
                                uint32_t capacity) {
   require_auth(get_self());
+
+  eosio::check(price.quantity.amount > 0, "price must be positive");
 
   auto burnables = get_burnable();
 
   auto be = burnables.find(template_id);
 
   auto r = (_burnable_entity){.template_id = template_id,
-                              .token_contract = token_contract,
                               .price = price,
                               .burn_nft = burn_nft,
                               .capacity = capacity};
@@ -64,7 +65,6 @@ void monkeyburner::setparams(cfg_params &params) {
 }
 
 void monkeyburner::logburn(uint64_t asset_id, eosio::name &account,
-                           eosio::name &reward_contract, eosio::asset &pricei,
-                           bool burned) {
+                           eosio::extended_asset &pricei, bool burned) {
   require_auth(get_self());
 }

@@ -19,15 +19,14 @@ public:
                                     std::vector<uint64_t> & asset_ids,
                                     std::string & memo);
 
-  [[eosio::action]] void setburnable(
-      int32_t template_id, eosio::name & token_contract, eosio::asset & price,
-      bool burn_nft, uint32_t capacity);
+  [[eosio::action]] void setburnable(int32_t template_id,
+                                     eosio::extended_asset & price,
+                                     bool burn_nft, uint32_t capacity);
 
   [[eosio::action]] void rmburnable(int32_t template_id);
 
   [[eosio::action]] void logburn(uint64_t asset_id, eosio::name & account,
-                                 eosio::name & reward_contract,
-                                 eosio::asset & price, bool burned);
+                                 eosio::extended_asset & price, bool burned);
 
   [[eosio::action]] void init();
   [[eosio::action]] void destruct();
@@ -43,8 +42,7 @@ private:
 
   struct [[eosio::table("burnable")]] _burnable_entity {
     int32_t template_id;
-    eosio::name token_contract;
-    eosio::asset price;
+    eosio::extended_asset price;
     bool burn_nft;
     uint32_t capacity;
 
